@@ -1,9 +1,16 @@
 import { Suspense } from 'react';
 import {
+  getApiProviderRows,
+  getApiQuickStartRows,
+  getApiSettingsRows,
+  getApiSetupRows,
   getApiKeyRows,
   getDeploymentRows,
+  getMonitoringAlertRows,
+  getMonitoringQueryRows,
   getMonitoringRows,
   getProjectRows,
+  getSettingsRows,
 } from '../dashboard-queries';
 
 interface Metric {
@@ -131,14 +138,9 @@ export function ApiOverviewPageContent({ teamSlug }: { teamSlug: string }) {
       teamSlug={teamSlug}
       title="API"
     >
-      <DataTable
-        label="API setup"
-        rows={[
-          { detail: 'Guide', name: 'Quick Start', status: 'Ready' },
-          { detail: 'Credentials', name: 'Keys', status: 'Active' },
-          { detail: 'Routing', name: 'Providers', status: 'Configured' },
-        ]}
-      />
+      <Suspense fallback={<RowsSkeleton />}>
+        <ApiSetupRows />
+      </Suspense>
     </DashboardPage>
   );
 }
@@ -157,14 +159,9 @@ export function ApiQuickStartPageContent({ teamSlug }: { teamSlug: string }) {
       teamSlug={teamSlug}
       title="Quick Start"
     >
-      <DataTable
-        label="Quick start"
-        rows={[
-          { detail: 'Environment', name: 'Add API_KEY', status: 'Required' },
-          { detail: 'SDK', name: 'Install client', status: 'Ready' },
-          { detail: 'Request', name: 'Send test call', status: 'Next' },
-        ]}
-      />
+      <Suspense fallback={<RowsSkeleton />}>
+        <ApiQuickStartRows />
+      </Suspense>
     </DashboardPage>
   );
 }
@@ -204,14 +201,9 @@ export function ApiProvidersPageContent({ teamSlug }: { teamSlug: string }) {
       teamSlug={teamSlug}
       title="Providers"
     >
-      <DataTable
-        label="Providers"
-        rows={[
-          { detail: 'Primary', name: 'Provider A', status: 'Healthy' },
-          { detail: 'Fallback', name: 'Provider B', status: 'Healthy' },
-          { detail: 'Embeddings', name: 'Provider C', status: 'Healthy' },
-        ]}
-      />
+      <Suspense fallback={<RowsSkeleton />}>
+        <ApiProviderRows />
+      </Suspense>
     </DashboardPage>
   );
 }
@@ -230,14 +222,9 @@ export function ApiSettingsPageContent({ teamSlug }: { teamSlug: string }) {
       teamSlug={teamSlug}
       title="Settings"
     >
-      <DataTable
-        label="Settings"
-        rows={[
-          { detail: 'Traffic', name: 'Retry failed requests', status: 'Enabled' },
-          { detail: 'Usage', name: 'Store request metadata', status: 'Enabled' },
-          { detail: 'Spend', name: 'Monthly budget alert', status: 'Enabled' },
-        ]}
-      />
+      <Suspense fallback={<RowsSkeleton />}>
+        <ApiSettingsRows />
+      </Suspense>
     </DashboardPage>
   );
 }
@@ -277,14 +264,9 @@ export function MonitoringQueryPageContent({ teamSlug }: { teamSlug: string }) {
       teamSlug={teamSlug}
       title="Query"
     >
-      <DataTable
-        label="Recent queries"
-        rows={[
-          { detail: 'error:false', name: 'status:200', status: '481 hits' },
-          { detail: 'region:iad', name: 'duration:<100', status: '312 hits' },
-          { detail: 'path:/api/*', name: 'method:POST', status: '89 hits' },
-        ]}
-      />
+      <Suspense fallback={<RowsSkeleton />}>
+        <MonitoringQueryRows />
+      </Suspense>
     </DashboardPage>
   );
 }
@@ -303,14 +285,9 @@ export function MonitoringAlertsPageContent({ teamSlug }: { teamSlug: string }) 
       teamSlug={teamSlug}
       title="Alerts"
     >
-      <DataTable
-        label="Alerts"
-        rows={[
-          { detail: 'Error rate', name: 'Production errors', status: 'Active' },
-          { detail: 'Latency', name: 'P95 over 500ms', status: 'Active' },
-          { detail: 'Spend', name: 'Monthly budget', status: 'Active' },
-        ]}
-      />
+      <Suspense fallback={<RowsSkeleton />}>
+        <MonitoringAlertRows />
+      </Suspense>
     </DashboardPage>
   );
 }
@@ -329,14 +306,9 @@ export function SettingsPageContent({ teamSlug }: { teamSlug: string }) {
       teamSlug={teamSlug}
       title="Settings"
     >
-      <DataTable
-        label="Settings"
-        rows={[
-          { detail: 'Access', name: 'Members and roles', status: 'Configured' },
-          { detail: 'Billing', name: 'Plan and invoices', status: 'Current' },
-          { detail: 'Security', name: 'Authentication', status: 'Enforced' },
-        ]}
-      />
+      <Suspense fallback={<RowsSkeleton />}>
+        <SettingsRows />
+      </Suspense>
     </DashboardPage>
   );
 }
@@ -349,12 +321,40 @@ async function DeploymentRows({ teamSlug }: { teamSlug: string }) {
   return <DataTable label="Recent deployments" rows={await getDeploymentRows(teamSlug)} />;
 }
 
+async function ApiSetupRows() {
+  return <DataTable label="API setup" rows={await getApiSetupRows()} />;
+}
+
+async function ApiQuickStartRows() {
+  return <DataTable label="Quick start" rows={await getApiQuickStartRows()} />;
+}
+
 async function ApiKeyRows({ teamSlug }: { teamSlug: string }) {
   return <DataTable label="Keys" rows={await getApiKeyRows(teamSlug)} />;
 }
 
+async function ApiProviderRows() {
+  return <DataTable label="Providers" rows={await getApiProviderRows()} />;
+}
+
+async function ApiSettingsRows() {
+  return <DataTable label="Settings" rows={await getApiSettingsRows()} />;
+}
+
 async function MonitoringRows({ teamSlug }: { teamSlug: string }) {
   return <DataTable label="Signals" rows={await getMonitoringRows(teamSlug)} />;
+}
+
+async function MonitoringQueryRows() {
+  return <DataTable label="Recent queries" rows={await getMonitoringQueryRows()} />;
+}
+
+async function MonitoringAlertRows() {
+  return <DataTable label="Alerts" rows={await getMonitoringAlertRows()} />;
+}
+
+async function SettingsRows() {
+  return <DataTable label="Settings" rows={await getSettingsRows()} />;
 }
 
 function MetricGrid({ metrics }: { metrics: Metric[] }) {

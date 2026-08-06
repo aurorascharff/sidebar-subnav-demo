@@ -8,7 +8,7 @@ export interface DashboardRow {
 }
 
 async function getRequestScopedRows(rows: DashboardRow[]): Promise<DashboardRow[]> {
-  await cookies();
+  (await cookies()).get('demo-session');
   await new Promise((resolve) => setTimeout(resolve, 300));
   return rows;
 }
