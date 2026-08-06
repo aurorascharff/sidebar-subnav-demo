@@ -170,6 +170,58 @@ a {
   background: var(--active);
 }
 
+.sidebar-pane-skeleton {
+  gap: 8px;
+  padding: 3px 9px;
+}
+
+.sidebar-skeleton-back {
+  width: 100%;
+  height: 36px;
+}
+
+.sidebar-skeleton-row {
+  display: flex;
+  min-height: 36px;
+  align-items: center;
+  gap: 9px;
+}
+
+.sidebar-skeleton-icon {
+  width: 16px;
+  height: 16px;
+  flex: none;
+}
+
+.sidebar-skeleton-text {
+  width: 96px;
+  height: 14px;
+}
+
+.sidebar-mode-switch {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--raised);
+  padding: 2px;
+}
+
+.sidebar-mode-switch button {
+  min-height: 28px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.sidebar-mode-switch button[aria-pressed="true"] {
+  background: var(--active);
+  color: var(--text);
+}
+
 .nav-button {
   border: 0;
   background: transparent;

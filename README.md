@@ -36,14 +36,15 @@ fallback would briefly show the wrong pane on a direct nested-route visit.
 
 ### Fix
 
-Only the route-aware navigation is wrapped in Suspense. Its fallback renders
-the real top-level navigation instead of a generic skeleton. This keeps
-top-level routes stable and lets direct nested routes show a deliberate fallback
-until `usePathname()` resolves the correct pane.
+The demo exposes both choices with the switch below the sidebar:
 
-A second inline script could select the nested pane before hydration, but that
-would duplicate more route-selection logic. The demo leaves that trade-off open
-and uses a small pre-paint script only for active-link state, following
+- **Fallback** renders a stable pane skeleton until `usePathname()` resolves the
+  correct navigation. It avoids showing the wrong pane but has a loading state.
+- **Inline** includes the static panes in the fallback and uses a pre-paint
+  script to select the correct one. It avoids the loading state but duplicates a
+  small amount of route-selection logic.
+
+The separate active-link script follows
 [Building an active NavLink component in Next.js](https://aurorascharff.no/posts/building-an-active-navlink-component-in-nextjs/).
 
 A parallel route could server-render the exact pane, but crossing its segment

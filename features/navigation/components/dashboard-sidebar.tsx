@@ -3,6 +3,7 @@ import { Suspense } from 'react';
 import { getCurrentUser } from '@/features/account/account-queries';
 import { NavLinkScript } from './nav-link-script';
 import {
+  SidebarModeSwitch,
   SidebarNavigation,
   SidebarNavigationFallback,
 } from './sidebar';
@@ -30,6 +31,8 @@ export function DashboardSidebar({
           </>
         ))}
       </Suspense>
+
+      <SidebarModeSwitch />
 
       <Suspense fallback={<SidebarUserSkeleton />}>
         <SidebarUser />
