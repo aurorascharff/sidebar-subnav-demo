@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import type { CurrentUser } from '@/features/account/account-types';
 import {
   getRouteSection,
   pathToRoute,
@@ -18,9 +19,11 @@ import {
 export function Sidebar({
   initialState,
   teamSlug,
+  user,
 }: {
   initialState: SidebarState;
   teamSlug: string;
+  user: CurrentUser;
 }) {
   const pathname = usePathname() || initialState.pathname;
   const currentRoute = pathToRoute(pathname, teamSlug);
@@ -35,9 +38,12 @@ export function Sidebar({
 
   return (
     <aside className="dashboard-sidebar">
-      <Link className="team-switcher" href={`/${teamSlug}`} prefetch={true}>
+      <Link className="team-switcher" href={`/${teamSlug}`}>
         <span className="avatar" />
-        <span className="label">{teamSlug}</span>
+        <span className="team-copy">
+          <span className="label">{teamSlug}</span>
+          <span className="meta">{user.role}</span>
+        </span>
       </Link>
 
       <div className="find">Find...</div>
@@ -89,6 +95,14 @@ export function Sidebar({
           ) : null}
         </div>
       </nav>
+
+      <div className="user-card">
+        <span className="user-avatar">{user.name.slice(0, 1)}</span>
+        <span className="team-copy">
+          <span className="label">{user.name}</span>
+          <span className="meta">{user.email}</span>
+        </span>
+      </div>
     </aside>
   );
 }
@@ -113,7 +127,6 @@ function NavLink({
       data-navlink-exact={!showChevron || undefined}
       data-navlink-href={href}
       href={href as RouteTemplate}
-      prefetch={true}
       suppressHydrationWarning
     >
       <span className={`icon icon-${icon}`} />

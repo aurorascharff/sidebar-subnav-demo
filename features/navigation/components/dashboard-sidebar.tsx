@@ -1,9 +1,11 @@
+import { getCurrentUser } from '@/features/account/account-queries';
 import { getSidebarStateForPath } from '../navigation-model';
 import { Sidebar } from './sidebar';
 
-export function DashboardSidebar({ teamSlug }: { teamSlug: string }) {
+export async function DashboardSidebar({ teamSlug }: { teamSlug: string }) {
+  const user = await getCurrentUser();
   const initialState = getSidebarStateForPath(`/${teamSlug}`, teamSlug);
-  return <Sidebar initialState={initialState} teamSlug={teamSlug} />;
+  return <Sidebar initialState={initialState} teamSlug={teamSlug} user={user} />;
 }
 
 export function DashboardSidebarSkeleton() {

@@ -26,10 +26,13 @@ and avoids the cache behavior this demo is meant to exercise.
 
 ## Fix 2: Keep Sidebar State Cheap
 
-The layout receives team params from the route tree, and the sidebar state is
-derived from the shared route model. There is no mocked delay in the sidebar.
-The only fake async work in this demo is the page content in
-`features/dashboard/dashboard-queries.ts`.
+The layout receives team params from the route tree, and the active sidebar
+state is derived from the shared route model. User-specific shell data is read
+with `"use cache: private"` in `features/account/account-queries.ts`, so it can
+depend on cookies without becoming shared server cache data.
+
+There is no mocked delay in the sidebar. The only fake async delay in this demo
+is the page content in `features/dashboard/dashboard-queries.ts`.
 
 ## Problem 3: Active State Can Flicker Before Hydration
 
