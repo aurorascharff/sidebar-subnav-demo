@@ -316,8 +316,16 @@ a {
 }
 
 .breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   color: var(--muted);
   font-size: 13px;
+}
+
+.breadcrumb-skeleton {
+  width: 48px;
+  height: 13px;
 }
 
 .page {
@@ -460,6 +468,11 @@ p {
 .sidebar-skeleton-link {
   min-height: 36px;
   border-radius: 7px;
+}
+
+.sidebar-skeleton-user {
+  width: 128px;
+  height: 16px;
 }
 
 @keyframes pulse {

@@ -1,28 +1,94 @@
+import Link from 'next/link';
+import { Suspense } from 'react';
 import { getCurrentUser } from '@/features/account/account-queries';
-import { getSidebarStateForPath } from '../navigation-model';
-import { Sidebar } from './sidebar';
+import { NavLinkScript } from './nav-link-script';
+import { SidebarNavigation } from './sidebar';
 
-export async function DashboardSidebar({ teamSlug }: { teamSlug: string }) {
-  const user = await getCurrentUser();
-  const initialState = getSidebarStateForPath(`/${teamSlug}`, teamSlug);
-  return <Sidebar initialState={initialState} teamSlug={teamSlug} user={user} />;
+export function DashboardSidebar({
+  params,
+}: {
+  params: Promise<{ teamSlug: string }>;
+}) {
+  return (
+    <aside className="dashboard-sidebar">
+      <Suspense fallback={<TeamSwitcherSkeleton />}>
+        {params.then(({ teamSlug }) => (
+          <TeamSwitcher teamSlug={teamSlug} />
+        ))}
+      </Suspense>
+
+      <div className="find">Find...</div>
+
+      <Suspense fallback={<SidebarNavigationSkeleton />}>
+        {params.then(({ teamSlug }) => (
+          <>
+            <SidebarNavigation teamSlug={teamSlug} />
+            <NavLinkScript />
+          </>
+        ))}
+      </Suspense>
+
+      <Suspense fallback={<SidebarUserSkeleton />}>
+        <SidebarUser />
+      </Suspense>
+    </aside>
+  );
 }
 
-export function DashboardSidebarSkeleton() {
+async function TeamSwitcher({ teamSlug }: { teamSlug: string }) {
+  const user = await getCurrentUser();
+
   return (
-    <aside className="dashboard-sidebar" aria-hidden>
-      <div className="team-switcher">
-        <span className="avatar" />
-        <span className="skeleton sidebar-skeleton-label" />
+    <Link className="team-switcher" href={`/${teamSlug}`}>
+      <span className="avatar" />
+      <span className="team-copy">
+        <span className="label">{teamSlug}</span>
+        <span className="meta">{user.role}</span>
+      </span>
+    </Link>
+  );
+}
+
+async function SidebarUser() {
+  const user = await getCurrentUser();
+
+  return (
+    <div className="user-card">
+      <span className="user-avatar">{user.name.slice(0, 1)}</span>
+      <span className="team-copy">
+        <span className="label">{user.name}</span>
+        <span className="meta">{user.email}</span>
+      </span>
+    </div>
+  );
+}
+
+function TeamSwitcherSkeleton() {
+  return (
+    <div className="team-switcher" aria-hidden>
+      <span className="avatar" />
+      <span className="skeleton sidebar-skeleton-label" />
+    </div>
+  );
+}
+
+function SidebarNavigationSkeleton() {
+  return (
+    <nav className="nav-window" aria-label="Dashboard" aria-busy="true">
+      <div className="pane" aria-hidden>
+        {Array.from({ length: 6 }, (_, index) => (
+          <div className="skeleton sidebar-skeleton-link" key={index} />
+        ))}
       </div>
-      <div className="skeleton sidebar-skeleton-search" />
-      <div className="nav-window">
-        <div className="pane">
-          {Array.from({ length: 6 }, (_, index) => (
-            <div className="skeleton sidebar-skeleton-link" key={index} />
-          ))}
-        </div>
-      </div>
-    </aside>
+    </nav>
+  );
+}
+
+function SidebarUserSkeleton() {
+  return (
+    <div className="user-card" aria-hidden>
+      <span className="skeleton user-avatar" />
+      <span className="skeleton sidebar-skeleton-user" />
+    </div>
   );
 }

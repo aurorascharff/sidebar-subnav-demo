@@ -24,6 +24,8 @@ interface Row {
   status: string;
 }
 
+type TeamSlug = Promise<string>;
+
 function DashboardPage({
   action,
   area,
@@ -38,13 +40,18 @@ function DashboardPage({
   children: React.ReactNode;
   description: string;
   metrics: Metric[];
-  teamSlug: string;
+  teamSlug: TeamSlug;
   title: string;
 }) {
   return (
     <>
       <div className="topbar">
-        <div className="breadcrumbs">{teamSlug} / {area}</div>
+        <div className="breadcrumbs">
+          <Suspense fallback={<span className="skeleton breadcrumb-skeleton" />}>
+            {teamSlug.then((slug) => <span>{slug}</span>)}
+          </Suspense>{' '}
+          / {area}
+        </div>
       </div>
       <div className="page">
         <header className="page-header">
@@ -61,28 +68,7 @@ function DashboardPage({
   );
 }
 
-export function PageSkeleton() {
-  return (
-    <>
-      <div className="topbar">
-        <div className="skeleton skeleton-line" />
-      </div>
-      <div className="page">
-        <div className="skeleton skeleton-title" />
-        <div className="skeleton skeleton-line" />
-        <MetricGrid
-          metrics={[
-            { label: 'Metric', value: '-' },
-            { label: 'Metric', value: '-' },
-            { label: 'Metric', value: '-' },
-          ]}
-        />
-      </div>
-    </>
-  );
-}
-
-export function ProjectsOverview({ teamSlug }: { teamSlug: string }) {
+export function ProjectsOverview({ teamSlug }: { teamSlug: TeamSlug }) {
   return (
     <DashboardPage
       action="New Project"
@@ -103,7 +89,7 @@ export function ProjectsOverview({ teamSlug }: { teamSlug: string }) {
   );
 }
 
-export function DeploymentsPageContent({ teamSlug }: { teamSlug: string }) {
+export function DeploymentsPageContent({ teamSlug }: { teamSlug: TeamSlug }) {
   return (
     <DashboardPage
       action="New Deployment"
@@ -124,7 +110,7 @@ export function DeploymentsPageContent({ teamSlug }: { teamSlug: string }) {
   );
 }
 
-export function ApiOverviewPageContent({ teamSlug }: { teamSlug: string }) {
+export function ApiOverviewPageContent({ teamSlug }: { teamSlug: TeamSlug }) {
   return (
     <DashboardPage
       action="Get API Key"
@@ -145,7 +131,7 @@ export function ApiOverviewPageContent({ teamSlug }: { teamSlug: string }) {
   );
 }
 
-export function ApiQuickStartPageContent({ teamSlug }: { teamSlug: string }) {
+export function ApiQuickStartPageContent({ teamSlug }: { teamSlug: TeamSlug }) {
   return (
     <DashboardPage
       action="Copy Snippet"
@@ -166,7 +152,7 @@ export function ApiQuickStartPageContent({ teamSlug }: { teamSlug: string }) {
   );
 }
 
-export function ApiKeysPageContent({ teamSlug }: { teamSlug: string }) {
+export function ApiKeysPageContent({ teamSlug }: { teamSlug: TeamSlug }) {
   return (
     <DashboardPage
       action="Create Key"
@@ -187,7 +173,7 @@ export function ApiKeysPageContent({ teamSlug }: { teamSlug: string }) {
   );
 }
 
-export function ApiProvidersPageContent({ teamSlug }: { teamSlug: string }) {
+export function ApiProvidersPageContent({ teamSlug }: { teamSlug: TeamSlug }) {
   return (
     <DashboardPage
       action="Add Provider"
@@ -208,7 +194,7 @@ export function ApiProvidersPageContent({ teamSlug }: { teamSlug: string }) {
   );
 }
 
-export function ApiSettingsPageContent({ teamSlug }: { teamSlug: string }) {
+export function ApiSettingsPageContent({ teamSlug }: { teamSlug: TeamSlug }) {
   return (
     <DashboardPage
       action="Save Changes"
@@ -229,7 +215,7 @@ export function ApiSettingsPageContent({ teamSlug }: { teamSlug: string }) {
   );
 }
 
-export function MonitoringPageContent({ teamSlug }: { teamSlug: string }) {
+export function MonitoringPageContent({ teamSlug }: { teamSlug: TeamSlug }) {
   return (
     <DashboardPage
       action="Query Logs"
@@ -250,7 +236,7 @@ export function MonitoringPageContent({ teamSlug }: { teamSlug: string }) {
   );
 }
 
-export function MonitoringQueryPageContent({ teamSlug }: { teamSlug: string }) {
+export function MonitoringQueryPageContent({ teamSlug }: { teamSlug: TeamSlug }) {
   return (
     <DashboardPage
       action="Run Query"
@@ -271,7 +257,7 @@ export function MonitoringQueryPageContent({ teamSlug }: { teamSlug: string }) {
   );
 }
 
-export function MonitoringAlertsPageContent({ teamSlug }: { teamSlug: string }) {
+export function MonitoringAlertsPageContent({ teamSlug }: { teamSlug: TeamSlug }) {
   return (
     <DashboardPage
       action="Create Alert"
@@ -292,7 +278,7 @@ export function MonitoringAlertsPageContent({ teamSlug }: { teamSlug: string }) 
   );
 }
 
-export function SettingsPageContent({ teamSlug }: { teamSlug: string }) {
+export function SettingsPageContent({ teamSlug }: { teamSlug: TeamSlug }) {
   return (
     <DashboardPage
       action="Invite Member"
@@ -313,12 +299,12 @@ export function SettingsPageContent({ teamSlug }: { teamSlug: string }) {
   );
 }
 
-async function ProjectRows({ teamSlug }: { teamSlug: string }) {
-  return <DataTable label="Recent projects" rows={await getProjectRows(teamSlug)} />;
+async function ProjectRows({ teamSlug }: { teamSlug: TeamSlug }) {
+  return <DataTable label="Recent projects" rows={await getProjectRows(await teamSlug)} />;
 }
 
-async function DeploymentRows({ teamSlug }: { teamSlug: string }) {
-  return <DataTable label="Recent deployments" rows={await getDeploymentRows(teamSlug)} />;
+async function DeploymentRows({ teamSlug }: { teamSlug: TeamSlug }) {
+  return <DataTable label="Recent deployments" rows={await getDeploymentRows(await teamSlug)} />;
 }
 
 async function ApiSetupRows() {
@@ -329,8 +315,8 @@ async function ApiQuickStartRows() {
   return <DataTable label="Quick start" rows={await getApiQuickStartRows()} />;
 }
 
-async function ApiKeyRows({ teamSlug }: { teamSlug: string }) {
-  return <DataTable label="Keys" rows={await getApiKeyRows(teamSlug)} />;
+async function ApiKeyRows({ teamSlug }: { teamSlug: TeamSlug }) {
+  return <DataTable label="Keys" rows={await getApiKeyRows(await teamSlug)} />;
 }
 
 async function ApiProviderRows() {
@@ -341,8 +327,8 @@ async function ApiSettingsRows() {
   return <DataTable label="Settings" rows={await getApiSettingsRows()} />;
 }
 
-async function MonitoringRows({ teamSlug }: { teamSlug: string }) {
-  return <DataTable label="Signals" rows={await getMonitoringRows(teamSlug)} />;
+async function MonitoringRows({ teamSlug }: { teamSlug: TeamSlug }) {
+  return <DataTable label="Signals" rows={await getMonitoringRows(await teamSlug)} />;
 }
 
 async function MonitoringQueryRows() {

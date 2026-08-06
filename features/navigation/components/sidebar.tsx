@@ -13,42 +13,23 @@ import {
   topLevelLinks,
   type IconName,
   type RouteTemplate,
-  type SidebarState,
 } from '@/features/navigation/navigation-model';
 
-export function Sidebar({
-  initialState,
-  teamSlug,
-  user,
-}: {
-  initialState: SidebarState;
-  teamSlug: string;
-  user: CurrentUser;
-}) {
-  const pathname = usePathname() || initialState.pathname;
+export function SidebarNavigation({ teamSlug }: { teamSlug: string }) {
+  const pathname = usePathname();
   const currentRoute = pathToRoute(pathname, teamSlug);
   const currentNestedKey = getRouteSection(currentRoute);
   const [showNested, setShowNested] = useState(Boolean(currentNestedKey));
-  const nestedKey = currentNestedKey ?? initialState.nestedKey;
-  const nestedLinks = nestedKey ? sidebarSections[nestedKey] : undefined;
+  const nestedLinks = currentNestedKey
+    ? sidebarSections[currentNestedKey]
+    : undefined;
 
   useEffect(() => {
     setShowNested(Boolean(currentNestedKey));
   }, [currentNestedKey, pathname]);
 
   return (
-    <aside className="dashboard-sidebar">
-      <Link className="team-switcher" href={`/${teamSlug}`}>
-        <span className="avatar" />
-        <span className="team-copy">
-          <span className="label">{teamSlug}</span>
-          <span className="meta">{user.role}</span>
-        </span>
-      </Link>
-
-      <div className="find">Find...</div>
-
-      <nav className="nav-window" aria-label="Dashboard">
+    <nav className="nav-window" aria-label="Dashboard">
         <div className={`pane ${showNested ? 'pane-main-hidden' : ''}`}>
           {topLevelLinks.map((item) => {
             if ('heading' in item) {
@@ -94,16 +75,7 @@ export function Sidebar({
             </>
           ) : null}
         </div>
-      </nav>
-
-      <div className="user-card">
-        <span className="user-avatar">{user.name.slice(0, 1)}</span>
-        <span className="team-copy">
-          <span className="label">{user.name}</span>
-          <span className="meta">{user.email}</span>
-        </span>
-      </div>
-    </aside>
+    </nav>
   );
 }
 

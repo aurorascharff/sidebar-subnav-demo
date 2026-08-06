@@ -31,12 +31,6 @@ export interface NavHeadingDefinition {
 
 export type TopLevelNavItem = NavLinkDefinition | NavHeadingDefinition;
 
-export interface SidebarState {
-  nestedKey?: NestedSidebarKey;
-  pathname: string;
-  route: RouteTemplate;
-}
-
 export const routeDefinitions: Record<RouteTemplate, RouteDefinition> = {
   '/[teamSlug]': {
     label: 'Projects',
@@ -137,15 +131,4 @@ export function pathToRoute(pathname: string, teamSlug: string): RouteTemplate {
 
 export function getRouteSection(route: RouteTemplate): NestedSidebarKey | undefined {
   return routeDefinitions[route].section;
-}
-
-export function getSidebarStateForPath(pathname: string, teamSlug: string): SidebarState {
-  const route = pathToRoute(pathname, teamSlug);
-  const nestedKey = getRouteSection(route);
-
-  return {
-    nestedKey,
-    pathname,
-    route,
-  };
 }
