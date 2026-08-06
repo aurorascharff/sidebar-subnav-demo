@@ -1,91 +1,68 @@
 # Sidebar Subnav Demo
 
-A small Next 16 App Router demo for a dashboard shell with nested sidebar
-navigation, user-scoped shell data, and route active state.
+A minimal Next.js 16 dashboard showing a persistent sidebar, nested product
+navigation, and Partial Prefetching with session-dependent shell data.
 
-## Problem 1: The First Paint Can Show The Wrong Product
+## Problem 1: The destination should be clear in the first paint
 
-A dashboard entry route should paint the correct product area immediately. If
-the shell starts generic and later swaps to the destination-specific UI, the user
-sees a flash of the wrong experience.
+A direct visit to a nested route should not briefly show another product or a
+generic page before the destination appears.
 
-## Fix 1: Keep Product-Specific UI In The Route
+### Fix
 
-Each route owns its page content and primary action. Navigation metadata only
-describes links. The page for `/[teamSlug]/~/api/keys` renders the keys page;
-it does not ask the sidebar model what the page title or action should be.
+Each page renders its product title, description, action, and metrics
+synchronously. The page owns a narrow Suspense boundary around request-scoped
+rows, so the App Shell identifies the correct destination while fresh data
+streams behind a stable fallback.
 
-## Problem 2: The Sidebar Should Not Remount During Soft Navigation
+## Problem 2: The sidebar should keep its state during navigation
 
-If nested sidebar content is owned by child routes, moving from a top-level route
-into a nested route can replace the whole sidebar while the next route resolves.
-That exposes a sidebar fallback during normal navigation.
+Putting the sidebar in a child route can replace it when moving between product
+sections. That can expose a network wait and reset local state such as scroll
+position or whether the nested pane is open.
 
-## Fix 2: Keep The Sidebar In The Layout
+### Fix
 
-The team layout renders the sidebar next to `children`. The sidebar stays
-mounted while page content changes. It does not optimistically switch panes on
-click; the nested pane opens when the pathname changes.
+The team layout owns one persistent sidebar. Its nested pane definitions are
+static route metadata already available to the client, while `usePathname()`
+selects the current pane. Soft navigation updates that mounted sidebar without a
+parallel route, a keyed boundary, or an optimistic pane switch.
 
-## Problem 3: User Shell Data Is Not Shared Static Data
+## Problem 3: Route-aware navigation cannot be part of the shared static shell
 
-Dashboard chrome often depends on the current user, team role, permissions, or
-flags. That data can depend on cookies or headers, so plain `"use cache"` is the
-wrong cache boundary.
+The parent team layout does not know which child route is active while the
+shared App Shell is prerendered. Rendering the top-level navigation as the
+fallback would briefly show the wrong pane on a direct nested-route visit.
 
-## Fix 3: Use Private Cache For Session Data
+### Fix
 
-`features/account/account-queries.ts` uses `"use cache: private"` for the
-current user. The result can be reused in the browser session without becoming a
-shared server cache entry.
+Only the navigation area is wrapped in Suspense, with a neutral skeleton that
+keeps its dimensions stable. The rest of the sidebar renders independently. A
+small inline script runs with the resolved links to set their active pathname
+before hydration; it does not choose the pane or reimplement navigation.
 
-## Problem 4: URL Data Does Not Belong In The Shared Shell
+This is the main trade-off in the demo: a direct load briefly shows a neutral
+sub-nav fallback, while soft navigation remains immediate and preserves sidebar
+state. A parallel route could server-render the exact pane, but crossing its
+segment boundary can remount that pane and make its availability depend on the
+next route payload.
 
-The route pathname, params, and search params vary per link. If the app reads
-that URL data in the wrong place, the shared shell becomes tied to one
-destination.
+## Problem 4: Session data should not block soft navigation
 
-## Fix 4: Keep URL State Behind The Right Boundary
+Sidebar chrome often depends on cookies, the current user, permissions, or
+flags. Treating all of that as uncached request work would make the same fallback
+appear on every navigation.
 
-Pages stay synchronous and resolve `params` with `params.then(...)` inside their
-Suspense boundary. The sidebar active state is client-side URL state via
-`usePathname()`.
+### Fix
 
-## Problem 5: Active State Can Flicker Before Hydration
+`getCurrentUser()` uses `"use cache: private"` with a five-minute stale time.
+With Cache Components and Partial Prefetching, the default `<Link>` prefetch
+includes that session-dependent UI in the route App Shell and caches it only in
+the browser session. It still resolves fresh on a direct load.
 
-If active state only appears after the client hydrates, a hard reload can briefly
-paint links as inactive.
-
-## Fix 5: Seed Active Links Before Hydration
-
-`NavLinkScript` is a tiny root script that marks matching links with
-`aria-current="page"` during HTML parse. It only updates link state; it does not
-reimplement navigation.
-
-## Problem 6: Prefetching Has Different Jobs
-
-Partial Prefetching gives links the route App Shell by default. Runtime
-prefetching with `prefetch={true}` is for URL-specific dynamic work and costs a
-server invocation per prefetchable link.
-
-## Fix 6: Do Not Use `prefetch={true}` By Default
-
-The sidebar links do not set `prefetch={true}`. The demo keeps URL-specific page
-data behind page Suspense boundaries, so it is clear what belongs to the shell
-and what streams later. Runtime prefetch should be an explicit choice for links
-where fetching URL-specific data before click is worth the extra server work.
-
-## Problem 7: Parallel Routes Are Not The Default Fix
-
-A parallel route can let a child route own a sidebar slot, but that is only
-useful when the actual server-rendered sidebar structure must differ by child
-route.
-
-## Fix 7: Do Not Use A Parallel Route For Active State
-
-This demo does not use an `@sidebar` route. The problem being modeled is active
-state and stable layout chrome, so the smaller fix is a layout-owned sidebar
-plus the pre-hydration active-state script.
+The links intentionally do not use `prefetch={true}`. That opt-in is for work
+that depends on per-link URL data such as `params` or `searchParams`; it is not
+required for cookie-dependent shell data.
 
 ## Run
 
@@ -94,15 +71,4 @@ pnpm install
 pnpm dev
 ```
 
-Open:
-
-```text
-http://localhost:3000/acme/~/api/keys
-```
-
-To force a cold local build cache:
-
-```sh
-pnpm clean
-pnpm dev
-```
+Open `http://localhost:3000/acme/~/api/keys`.
