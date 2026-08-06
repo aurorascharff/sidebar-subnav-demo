@@ -465,14 +465,14 @@ p {
   border-radius: 7px;
 }
 
-.sidebar-skeleton-link {
-  min-height: 36px;
-  border-radius: 7px;
+.sidebar-skeleton-user-name {
+  width: 92px;
+  height: 15px;
 }
 
-.sidebar-skeleton-user {
-  width: 128px;
-  height: 16px;
+.sidebar-skeleton-user-email {
+  width: 124px;
+  height: 12px;
 }
 
 @keyframes pulse {

@@ -2,7 +2,10 @@ import Link from 'next/link';
 import { Suspense } from 'react';
 import { getCurrentUser } from '@/features/account/account-queries';
 import { NavLinkScript } from './nav-link-script';
-import { SidebarNavigation } from './sidebar';
+import {
+  SidebarNavigation,
+  SidebarNavigationFallback,
+} from './sidebar';
 
 export function DashboardSidebar({
   params,
@@ -19,7 +22,7 @@ export function DashboardSidebar({
 
       <div className="find">Find...</div>
 
-      <Suspense fallback={<SidebarNavigationSkeleton />}>
+      <Suspense fallback={<SidebarNavigationFallback />}>
         {params.then(({ teamSlug }) => (
           <>
             <SidebarNavigation teamSlug={teamSlug} />
@@ -72,23 +75,14 @@ function TeamSwitcherSkeleton() {
   );
 }
 
-function SidebarNavigationSkeleton() {
-  return (
-    <nav className="nav-window" aria-label="Dashboard" aria-busy="true">
-      <div className="pane" aria-hidden>
-        {Array.from({ length: 6 }, (_, index) => (
-          <div className="skeleton sidebar-skeleton-link" key={index} />
-        ))}
-      </div>
-    </nav>
-  );
-}
-
 function SidebarUserSkeleton() {
   return (
     <div className="user-card" aria-hidden>
       <span className="skeleton user-avatar" />
-      <span className="skeleton sidebar-skeleton-user" />
+      <span className="team-copy">
+        <span className="skeleton sidebar-skeleton-user-name" />
+        <span className="skeleton sidebar-skeleton-user-email" />
+      </span>
     </div>
   );
 }
