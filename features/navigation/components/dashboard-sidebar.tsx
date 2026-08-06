@@ -1,12 +1,10 @@
 import Link from 'next/link';
 import { Suspense } from 'react';
 import { getCurrentUser } from '@/features/account/account-queries';
+import { SidebarFallbackDemo } from '@/features/demo/components/sidebar-fallback-demo';
+import { SidebarModeSwitch } from '@/features/demo/components/sidebar-mode-switch';
 import { NavLinkScript } from './nav-link-script';
-import {
-  SidebarModeSwitch,
-  SidebarNavigation,
-  SidebarNavigationFallback,
-} from './sidebar';
+import { SidebarNavigation } from './sidebar';
 
 export function DashboardSidebar({
   params,
@@ -23,7 +21,7 @@ export function DashboardSidebar({
 
       <div className="find">Find...</div>
 
-      <Suspense fallback={<SidebarNavigationFallback />}>
+      <Suspense fallback={<SidebarFallbackDemo />}>
         {params.then(({ teamSlug }) => (
           <>
             <SidebarNavigation teamSlug={teamSlug} />

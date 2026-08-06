@@ -198,6 +198,15 @@ a {
   height: 14px;
 }
 
+.sidebar-fallback-demo,
+.sidebar-fallback-frame {
+  display: contents;
+}
+
+.sidebar-fallback-frame[hidden] {
+  display: none;
+}
+
 .sidebar-mode-switch {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

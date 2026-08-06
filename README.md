@@ -44,6 +44,10 @@ The demo exposes both choices with the switch below the sidebar:
   script to select the correct one. It avoids the loading state but duplicates a
   small amount of route-selection logic.
 
+The switch stores the selected mode in a cookie and reloads the same URL. A
+demo-only wrapper chooses between the two fallback components, keeping that
+comparison code out of the sidebar implementation.
+
 The separate active-link script follows
 [Building an active NavLink component in Next.js](https://aurorascharff.no/posts/building-an-active-navlink-component-in-nextjs/).
 
