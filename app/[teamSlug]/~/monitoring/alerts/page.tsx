@@ -1,16 +1,16 @@
 import { Suspense } from 'react';
 import {
-  PageSurface,
-  PageSurfaceSkeleton,
-} from '@/features/dashboard/components/page-surface';
+  MonitoringAlertsPageContent,
+  PageSkeleton,
+} from '@/features/dashboard/components/dashboard-pages';
 
 export default function MonitoringAlertsPage({
   params,
 }: PageProps<'/[teamSlug]/~/monitoring/alerts'>) {
   return (
-    <Suspense fallback={<PageSurfaceSkeleton />}>
+    <Suspense fallback={<PageSkeleton />}>
       {params.then(({ teamSlug }) => (
-        <PageSurface route="/[teamSlug]/~/monitoring/alerts" teamSlug={teamSlug} />
+        <MonitoringAlertsPageContent teamSlug={teamSlug} />
       ))}
     </Suspense>
   );

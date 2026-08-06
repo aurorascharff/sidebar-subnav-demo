@@ -1,16 +1,16 @@
 import { Suspense } from 'react';
 import {
-  PageSurface,
-  PageSurfaceSkeleton,
-} from '@/features/dashboard/components/page-surface';
+  MonitoringPageContent,
+  PageSkeleton,
+} from '@/features/dashboard/components/dashboard-pages';
 
 export default function MonitoringPage({
   params,
 }: PageProps<'/[teamSlug]/~/monitoring'>) {
   return (
-    <Suspense fallback={<PageSurfaceSkeleton />}>
+    <Suspense fallback={<PageSkeleton />}>
       {params.then(({ teamSlug }) => (
-        <PageSurface route="/[teamSlug]/~/monitoring" teamSlug={teamSlug} />
+        <MonitoringPageContent teamSlug={teamSlug} />
       ))}
     </Suspense>
   );

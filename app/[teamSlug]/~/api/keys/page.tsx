@@ -1,16 +1,16 @@
 import { Suspense } from 'react';
 import {
-  PageSurface,
-  PageSurfaceSkeleton,
-} from '@/features/dashboard/components/page-surface';
+  ApiKeysPageContent,
+  PageSkeleton,
+} from '@/features/dashboard/components/dashboard-pages';
 
 export default function ApiKeysPage({
   params,
 }: PageProps<'/[teamSlug]/~/api/keys'>) {
   return (
-    <Suspense fallback={<PageSurfaceSkeleton />}>
+    <Suspense fallback={<PageSkeleton />}>
       {params.then(({ teamSlug }) => (
-        <PageSurface route="/[teamSlug]/~/api/keys" teamSlug={teamSlug} />
+        <ApiKeysPageContent teamSlug={teamSlug} />
       ))}
     </Suspense>
   );

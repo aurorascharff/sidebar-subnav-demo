@@ -1,16 +1,16 @@
 import { Suspense } from 'react';
 import {
-  PageSurface,
-  PageSurfaceSkeleton,
-} from '@/features/dashboard/components/page-surface';
+  PageSkeleton,
+  SettingsPageContent,
+} from '@/features/dashboard/components/dashboard-pages';
 
 export default function SettingsPage({
   params,
 }: PageProps<'/[teamSlug]/~/settings'>) {
   return (
-    <Suspense fallback={<PageSurfaceSkeleton />}>
+    <Suspense fallback={<PageSkeleton />}>
       {params.then(({ teamSlug }) => (
-        <PageSurface route="/[teamSlug]/~/settings" teamSlug={teamSlug} />
+        <SettingsPageContent teamSlug={teamSlug} />
       ))}
     </Suspense>
   );

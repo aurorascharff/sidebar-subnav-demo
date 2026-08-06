@@ -1,16 +1,16 @@
 import { Suspense } from 'react';
 import {
-  PageSurface,
-  PageSurfaceSkeleton,
-} from '@/features/dashboard/components/page-surface';
+  DeploymentsPageContent,
+  PageSkeleton,
+} from '@/features/dashboard/components/dashboard-pages';
 
 export default function DeploymentsPage({
   params,
 }: PageProps<'/[teamSlug]/~/deployments'>) {
   return (
-    <Suspense fallback={<PageSurfaceSkeleton />}>
+    <Suspense fallback={<PageSkeleton />}>
       {params.then(({ teamSlug }) => (
-        <PageSurface route="/[teamSlug]/~/deployments" teamSlug={teamSlug} />
+        <DeploymentsPageContent teamSlug={teamSlug} />
       ))}
     </Suspense>
   );

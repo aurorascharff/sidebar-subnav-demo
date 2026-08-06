@@ -1,16 +1,16 @@
 import { Suspense } from 'react';
 import {
-  PageSurface,
-  PageSurfaceSkeleton,
-} from '@/features/dashboard/components/page-surface';
+  ApiSettingsPageContent,
+  PageSkeleton,
+} from '@/features/dashboard/components/dashboard-pages';
 
 export default function ApiSettingsPage({
   params,
 }: PageProps<'/[teamSlug]/~/api/settings'>) {
   return (
-    <Suspense fallback={<PageSurfaceSkeleton />}>
+    <Suspense fallback={<PageSkeleton />}>
       {params.then(({ teamSlug }) => (
-        <PageSurface route="/[teamSlug]/~/api/settings" teamSlug={teamSlug} />
+        <ApiSettingsPageContent teamSlug={teamSlug} />
       ))}
     </Suspense>
   );

@@ -15,8 +15,6 @@ export type NestedSidebarKey = 'team-monitoring' | 'team-api';
 export type IconName = 'grid' | 'pulse' | 'key' | 'lines';
 
 export interface RouteDefinition {
-  action: string;
-  description: string;
   label: string;
   section?: NestedSidebarKey;
 }
@@ -41,66 +39,44 @@ export interface SidebarState {
 
 export const routeDefinitions: Record<RouteTemplate, RouteDefinition> = {
   '/[teamSlug]': {
-    action: 'New Project',
-    description: 'Browse and manage everything deployed by this team.',
     label: 'Projects',
   },
   '/[teamSlug]/~/deployments': {
-    action: 'New Deployment',
-    description: 'Inspect recent production and preview deployments.',
     label: 'Deployments',
   },
   '/[teamSlug]/~/monitoring': {
-    action: 'Query Logs',
-    description: 'Understand application health across requests, functions, and traces.',
     label: 'Monitoring',
     section: 'team-monitoring',
   },
   '/[teamSlug]/~/monitoring/query': {
-    action: 'Run Query',
-    description: 'Search logs, traces, and metrics with shared dashboard filters.',
     label: 'Query',
     section: 'team-monitoring',
   },
   '/[teamSlug]/~/monitoring/alerts': {
-    action: 'Create Alert',
-    description: 'Configure alerts for errors, latency, traffic, and spend.',
     label: 'Alerts',
     section: 'team-monitoring',
   },
   '/[teamSlug]/~/api': {
-    action: 'Get API Key',
-    description: 'Route model calls through one endpoint with unified usage and controls.',
     label: 'API',
     section: 'team-api',
   },
   '/[teamSlug]/~/api/quick-start': {
-    action: 'Copy Snippet',
-    description: 'Connect an SDK and send your first request.',
     label: 'Quick Start',
     section: 'team-api',
   },
   '/[teamSlug]/~/api/keys': {
-    action: 'Create Key',
-    description: 'Create and manage request keys.',
     label: 'Keys',
     section: 'team-api',
   },
   '/[teamSlug]/~/api/providers': {
-    action: 'Add Provider Key',
-    description: 'Attach provider keys while keeping routing centralized.',
     label: 'Providers',
     section: 'team-api',
   },
   '/[teamSlug]/~/api/settings': {
-    action: 'Save Changes',
-    description: 'Configure routing behavior, retention, and team defaults.',
     label: 'Settings',
     section: 'team-api',
   },
   '/[teamSlug]/~/settings': {
-    action: 'Invite Member',
-    description: 'Manage team members, billing, security, and platform preferences.',
     label: 'Settings',
   },
 };

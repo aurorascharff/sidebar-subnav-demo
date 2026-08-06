@@ -1,16 +1,16 @@
 import { Suspense } from 'react';
 import {
-  PageSurface,
-  PageSurfaceSkeleton,
-} from '@/features/dashboard/components/page-surface';
+  ApiQuickStartPageContent,
+  PageSkeleton,
+} from '@/features/dashboard/components/dashboard-pages';
 
 export default function ApiQuickStartPage({
   params,
 }: PageProps<'/[teamSlug]/~/api/quick-start'>) {
   return (
-    <Suspense fallback={<PageSurfaceSkeleton />}>
+    <Suspense fallback={<PageSkeleton />}>
       {params.then(({ teamSlug }) => (
-        <PageSurface route="/[teamSlug]/~/api/quick-start" teamSlug={teamSlug} />
+        <ApiQuickStartPageContent teamSlug={teamSlug} />
       ))}
     </Suspense>
   );
