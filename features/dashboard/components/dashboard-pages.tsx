@@ -68,7 +68,13 @@ function DashboardPage({
   );
 }
 
-export function ProjectsOverview({ teamSlug }: { teamSlug: TeamSlug }) {
+export function ProjectsOverview({
+  children,
+  teamSlug,
+}: {
+  children: React.ReactNode;
+  teamSlug: TeamSlug;
+}) {
   return (
     <DashboardPage
       action="New Project"
@@ -82,14 +88,18 @@ export function ProjectsOverview({ teamSlug }: { teamSlug: TeamSlug }) {
       teamSlug={teamSlug}
       title="Projects"
     >
-      <Suspense fallback={<RowsSkeleton />}>
-        <ProjectRows teamSlug={teamSlug} />
-      </Suspense>
+      {children}
     </DashboardPage>
   );
 }
 
-export function DeploymentsPageContent({ teamSlug }: { teamSlug: TeamSlug }) {
+export function DeploymentsPageContent({
+  children,
+  teamSlug,
+}: {
+  children: React.ReactNode;
+  teamSlug: TeamSlug;
+}) {
   return (
     <DashboardPage
       action="New Deployment"
@@ -103,14 +113,18 @@ export function DeploymentsPageContent({ teamSlug }: { teamSlug: TeamSlug }) {
       teamSlug={teamSlug}
       title="Deployments"
     >
-      <Suspense fallback={<RowsSkeleton />}>
-        <DeploymentRows teamSlug={teamSlug} />
-      </Suspense>
+      {children}
     </DashboardPage>
   );
 }
 
-export function ApiOverviewPageContent({ teamSlug }: { teamSlug: TeamSlug }) {
+export function ApiOverviewPageContent({
+  children,
+  teamSlug,
+}: {
+  children: React.ReactNode;
+  teamSlug: TeamSlug;
+}) {
   return (
     <DashboardPage
       action="Get API Key"
@@ -124,14 +138,18 @@ export function ApiOverviewPageContent({ teamSlug }: { teamSlug: TeamSlug }) {
       teamSlug={teamSlug}
       title="API"
     >
-      <Suspense fallback={<RowsSkeleton />}>
-        <ApiSetupRows />
-      </Suspense>
+      {children}
     </DashboardPage>
   );
 }
 
-export function ApiQuickStartPageContent({ teamSlug }: { teamSlug: TeamSlug }) {
+export function ApiQuickStartPageContent({
+  children,
+  teamSlug,
+}: {
+  children: React.ReactNode;
+  teamSlug: TeamSlug;
+}) {
   return (
     <DashboardPage
       action="Copy Snippet"
@@ -145,14 +163,18 @@ export function ApiQuickStartPageContent({ teamSlug }: { teamSlug: TeamSlug }) {
       teamSlug={teamSlug}
       title="Quick Start"
     >
-      <Suspense fallback={<RowsSkeleton />}>
-        <ApiQuickStartRows />
-      </Suspense>
+      {children}
     </DashboardPage>
   );
 }
 
-export function ApiKeysPageContent({ teamSlug }: { teamSlug: TeamSlug }) {
+export function ApiKeysPageContent({
+  children,
+  teamSlug,
+}: {
+  children: React.ReactNode;
+  teamSlug: TeamSlug;
+}) {
   return (
     <DashboardPage
       action="Create Key"
@@ -166,14 +188,18 @@ export function ApiKeysPageContent({ teamSlug }: { teamSlug: TeamSlug }) {
       teamSlug={teamSlug}
       title="Keys"
     >
-      <Suspense fallback={<RowsSkeleton />}>
-        <ApiKeyRows teamSlug={teamSlug} />
-      </Suspense>
+      {children}
     </DashboardPage>
   );
 }
 
-export function ApiProvidersPageContent({ teamSlug }: { teamSlug: TeamSlug }) {
+export function ApiProvidersPageContent({
+  children,
+  teamSlug,
+}: {
+  children: React.ReactNode;
+  teamSlug: TeamSlug;
+}) {
   return (
     <DashboardPage
       action="Add Provider"
@@ -187,14 +213,18 @@ export function ApiProvidersPageContent({ teamSlug }: { teamSlug: TeamSlug }) {
       teamSlug={teamSlug}
       title="Providers"
     >
-      <Suspense fallback={<RowsSkeleton />}>
-        <ApiProviderRows />
-      </Suspense>
+      {children}
     </DashboardPage>
   );
 }
 
-export function ApiSettingsPageContent({ teamSlug }: { teamSlug: TeamSlug }) {
+export function ApiSettingsPageContent({
+  children,
+  teamSlug,
+}: {
+  children: React.ReactNode;
+  teamSlug: TeamSlug;
+}) {
   return (
     <DashboardPage
       action="Save Changes"
@@ -208,14 +238,18 @@ export function ApiSettingsPageContent({ teamSlug }: { teamSlug: TeamSlug }) {
       teamSlug={teamSlug}
       title="Settings"
     >
-      <Suspense fallback={<RowsSkeleton />}>
-        <ApiSettingsRows />
-      </Suspense>
+      {children}
     </DashboardPage>
   );
 }
 
-export function MonitoringPageContent({ teamSlug }: { teamSlug: TeamSlug }) {
+export function MonitoringPageContent({
+  children,
+  teamSlug,
+}: {
+  children: React.ReactNode;
+  teamSlug: TeamSlug;
+}) {
   return (
     <DashboardPage
       action="Query Logs"
@@ -229,14 +263,18 @@ export function MonitoringPageContent({ teamSlug }: { teamSlug: TeamSlug }) {
       teamSlug={teamSlug}
       title="Monitoring"
     >
-      <Suspense fallback={<RowsSkeleton />}>
-        <MonitoringRows teamSlug={teamSlug} />
-      </Suspense>
+      {children}
     </DashboardPage>
   );
 }
 
-export function MonitoringQueryPageContent({ teamSlug }: { teamSlug: TeamSlug }) {
+export function MonitoringQueryPageContent({
+  children,
+  teamSlug,
+}: {
+  children: React.ReactNode;
+  teamSlug: TeamSlug;
+}) {
   return (
     <DashboardPage
       action="Run Query"
@@ -250,14 +288,18 @@ export function MonitoringQueryPageContent({ teamSlug }: { teamSlug: TeamSlug })
       teamSlug={teamSlug}
       title="Query"
     >
-      <Suspense fallback={<RowsSkeleton />}>
-        <MonitoringQueryRows />
-      </Suspense>
+      {children}
     </DashboardPage>
   );
 }
 
-export function MonitoringAlertsPageContent({ teamSlug }: { teamSlug: TeamSlug }) {
+export function MonitoringAlertsPageContent({
+  children,
+  teamSlug,
+}: {
+  children: React.ReactNode;
+  teamSlug: TeamSlug;
+}) {
   return (
     <DashboardPage
       action="Create Alert"
@@ -271,14 +313,18 @@ export function MonitoringAlertsPageContent({ teamSlug }: { teamSlug: TeamSlug }
       teamSlug={teamSlug}
       title="Alerts"
     >
-      <Suspense fallback={<RowsSkeleton />}>
-        <MonitoringAlertRows />
-      </Suspense>
+      {children}
     </DashboardPage>
   );
 }
 
-export function SettingsPageContent({ teamSlug }: { teamSlug: TeamSlug }) {
+export function SettingsPageContent({
+  children,
+  teamSlug,
+}: {
+  children: React.ReactNode;
+  teamSlug: TeamSlug;
+}) {
   return (
     <DashboardPage
       action="Invite Member"
@@ -292,54 +338,52 @@ export function SettingsPageContent({ teamSlug }: { teamSlug: TeamSlug }) {
       teamSlug={teamSlug}
       title="Settings"
     >
-      <Suspense fallback={<RowsSkeleton />}>
-        <SettingsRows />
-      </Suspense>
+      {children}
     </DashboardPage>
   );
 }
 
-async function ProjectRows({ teamSlug }: { teamSlug: TeamSlug }) {
+export async function ProjectRows({ teamSlug }: { teamSlug: TeamSlug }) {
   return <DataTable label="Recent projects" rows={await getProjectRows(await teamSlug)} />;
 }
 
-async function DeploymentRows({ teamSlug }: { teamSlug: TeamSlug }) {
+export async function DeploymentRows({ teamSlug }: { teamSlug: TeamSlug }) {
   return <DataTable label="Recent deployments" rows={await getDeploymentRows(await teamSlug)} />;
 }
 
-async function ApiSetupRows() {
+export async function ApiSetupRows() {
   return <DataTable label="API setup" rows={await getApiSetupRows()} />;
 }
 
-async function ApiQuickStartRows() {
+export async function ApiQuickStartRows() {
   return <DataTable label="Quick start" rows={await getApiQuickStartRows()} />;
 }
 
-async function ApiKeyRows({ teamSlug }: { teamSlug: TeamSlug }) {
+export async function ApiKeyRows({ teamSlug }: { teamSlug: TeamSlug }) {
   return <DataTable label="Keys" rows={await getApiKeyRows(await teamSlug)} />;
 }
 
-async function ApiProviderRows() {
+export async function ApiProviderRows() {
   return <DataTable label="Providers" rows={await getApiProviderRows()} />;
 }
 
-async function ApiSettingsRows() {
+export async function ApiSettingsRows() {
   return <DataTable label="Settings" rows={await getApiSettingsRows()} />;
 }
 
-async function MonitoringRows({ teamSlug }: { teamSlug: TeamSlug }) {
+export async function MonitoringRows({ teamSlug }: { teamSlug: TeamSlug }) {
   return <DataTable label="Signals" rows={await getMonitoringRows(await teamSlug)} />;
 }
 
-async function MonitoringQueryRows() {
+export async function MonitoringQueryRows() {
   return <DataTable label="Recent queries" rows={await getMonitoringQueryRows()} />;
 }
 
-async function MonitoringAlertRows() {
+export async function MonitoringAlertRows() {
   return <DataTable label="Alerts" rows={await getMonitoringAlertRows()} />;
 }
 
-async function SettingsRows() {
+export async function SettingsRows() {
   return <DataTable label="Settings" rows={await getSettingsRows()} />;
 }
 
@@ -370,7 +414,7 @@ function DataTable({ label, rows }: { label: string; rows: Row[] }) {
   );
 }
 
-function RowsSkeleton() {
+export function RowsSkeleton() {
   return (
     <section className="section" aria-label="Loading rows">
       {Array.from({ length: 3 }, (_, index) => (

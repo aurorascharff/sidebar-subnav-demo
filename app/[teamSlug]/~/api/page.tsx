@@ -1,17 +1,20 @@
 import { Suspense } from 'react';
 import {
   ApiOverviewPageContent,
-  PageSkeleton,
+  ApiSetupRows,
+  RowsSkeleton,
 } from '@/features/dashboard/components/dashboard-pages';
 
 export default function ApiPage({
   params,
 }: PageProps<'/[teamSlug]/~/api'>) {
+  const teamSlug = params.then((value) => value.teamSlug);
+
   return (
-    <Suspense fallback={<PageSkeleton />}>
-      {params.then(({ teamSlug }) => (
-        <ApiOverviewPageContent teamSlug={teamSlug} />
-      ))}
-    </Suspense>
+    <ApiOverviewPageContent teamSlug={teamSlug}>
+      <Suspense fallback={<RowsSkeleton />}>
+        <ApiSetupRows />
+      </Suspense>
+    </ApiOverviewPageContent>
   );
 }

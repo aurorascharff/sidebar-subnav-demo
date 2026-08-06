@@ -1,17 +1,20 @@
 import { Suspense } from 'react';
 import {
   MonitoringQueryPageContent,
-  PageSkeleton,
+  MonitoringQueryRows,
+  RowsSkeleton,
 } from '@/features/dashboard/components/dashboard-pages';
 
 export default function MonitoringQueryPage({
   params,
 }: PageProps<'/[teamSlug]/~/monitoring/query'>) {
+  const teamSlug = params.then((value) => value.teamSlug);
+
   return (
-    <Suspense fallback={<PageSkeleton />}>
-      {params.then(({ teamSlug }) => (
-        <MonitoringQueryPageContent teamSlug={teamSlug} />
-      ))}
-    </Suspense>
+    <MonitoringQueryPageContent teamSlug={teamSlug}>
+      <Suspense fallback={<RowsSkeleton />}>
+        <MonitoringQueryRows />
+      </Suspense>
+    </MonitoringQueryPageContent>
   );
 }

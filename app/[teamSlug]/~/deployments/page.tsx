@@ -1,17 +1,20 @@
 import { Suspense } from 'react';
 import {
+  DeploymentRows,
   DeploymentsPageContent,
-  PageSkeleton,
+  RowsSkeleton,
 } from '@/features/dashboard/components/dashboard-pages';
 
 export default function DeploymentsPage({
   params,
 }: PageProps<'/[teamSlug]/~/deployments'>) {
+  const teamSlug = params.then((value) => value.teamSlug);
+
   return (
-    <Suspense fallback={<PageSkeleton />}>
-      {params.then(({ teamSlug }) => (
-        <DeploymentsPageContent teamSlug={teamSlug} />
-      ))}
-    </Suspense>
+    <DeploymentsPageContent teamSlug={teamSlug}>
+      <Suspense fallback={<RowsSkeleton />}>
+        <DeploymentRows teamSlug={teamSlug} />
+      </Suspense>
+    </DeploymentsPageContent>
   );
 }

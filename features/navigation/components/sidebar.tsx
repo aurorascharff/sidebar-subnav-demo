@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import type { CurrentUser } from '@/features/account/account-types';
 import {
   getRouteSection,
   pathToRoute,
