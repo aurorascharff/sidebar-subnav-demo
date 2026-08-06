@@ -1,7 +1,7 @@
 import {
-  computeNestedSidebar,
-  nestedLinkDefinitions,
+  getRouteSection,
   routeDefinitions,
+  sidebarSections,
   type RouteTemplate,
 } from '@/features/navigation/navigation-model';
 import { Suspense } from 'react';
@@ -15,8 +15,8 @@ export function PageSurface({
   teamSlug: string;
 }) {
   const definition = routeDefinitions[route];
-  const nestedKey = computeNestedSidebar(route);
-  const area = nestedKey ? nestedLinkDefinitions[nestedKey].title : definition.label;
+  const nestedKey = getRouteSection(route);
+  const area = nestedKey ? sidebarSections[nestedKey].title : definition.label;
 
   return (
     <>

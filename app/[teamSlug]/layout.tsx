@@ -1,8 +1,8 @@
 import { Suspense } from 'react';
 import {
-  SidebarSkeleton,
-  SidebarSlot,
-} from '@/features/navigation/components/sidebar-slot';
+  DashboardSidebar,
+  DashboardSidebarSkeleton,
+} from '@/features/navigation/components/dashboard-sidebar';
 
 export default function TeamLayout({
   children,
@@ -10,9 +10,9 @@ export default function TeamLayout({
 }: LayoutProps<"/[teamSlug]">) {
   return (
     <div className="app-shell">
-      <Suspense fallback={<SidebarSkeleton />}>
+      <Suspense fallback={<DashboardSidebarSkeleton />}>
         {params.then(({ teamSlug }) => (
-          <SidebarSlot teamSlug={teamSlug} />
+          <DashboardSidebar teamSlug={teamSlug} />
         ))}
       </Suspense>
       <main className="main-content">{children}</main>

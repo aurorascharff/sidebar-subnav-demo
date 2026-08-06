@@ -4,14 +4,13 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import {
-  computeNestedSidebar,
-  nestedLinkDefinitions,
+  getRouteSection,
   pathToRoute,
   routeDefinitions,
   routeToPath,
+  sidebarSections,
   topLevelLinks,
   type IconName,
-  type NestedSidebarKey,
   type RouteTemplate,
   type SidebarState,
 } from '@/features/navigation/navigation-model';
@@ -25,15 +24,12 @@ export function Sidebar({
 }) {
   const pathname = usePathname() || initialState.pathname;
   const currentRoute = pathToRoute(pathname, teamSlug);
-  const currentNestedKey = computeNestedSidebar(currentRoute);
-  const [optimisticNestedKey, setOptimisticNestedKey] =
-    useState<NestedSidebarKey>();
-  const [showNested, setShowNested] = useState(initialState.showNested);
-  const nestedKey = optimisticNestedKey ?? currentNestedKey ?? initialState.nestedKey;
-  const nestedLinks = nestedKey ? nestedLinkDefinitions[nestedKey] : undefined;
+  const currentNestedKey = getRouteSection(currentRoute);
+  const [showNested, setShowNested] = useState(Boolean(currentNestedKey));
+  const nestedKey = currentNestedKey ?? initialState.nestedKey;
+  const nestedLinks = nestedKey ? sidebarSections[nestedKey] : undefined;
 
   useEffect(() => {
-    setOptimisticNestedKey(undefined);
     setShowNested(Boolean(currentNestedKey));
   }, [currentNestedKey, pathname]);
 
@@ -64,11 +60,7 @@ export function Sidebar({
                 icon={item.icon}
                 key={item.route}
                 label={routeDefinitions[item.route].label}
-                nestedKey={item.nestedKey}
-                onNestedClick={(key) => {
-                  setOptimisticNestedKey(key);
-                  setShowNested(true);
-                }}
+                showChevron={Boolean(item.nestedKey)}
               />
             );
           })}
@@ -106,34 +98,27 @@ function NavLink({
   href,
   icon,
   label,
-  nestedKey,
-  onNestedClick,
+  showChevron,
 }: {
   active: boolean;
   href: string;
   icon: IconName;
   label: string;
-  nestedKey?: NestedSidebarKey;
-  onNestedClick?: (key: NestedSidebarKey) => void;
+  showChevron?: boolean;
 }) {
   return (
     <Link
       aria-current={active ? 'page' : undefined}
       className={`nav-link ${active ? 'nav-link-active' : ''}`}
-      data-navlink-exact={!nestedKey || undefined}
+      data-navlink-exact={!showChevron || undefined}
       data-navlink-href={href}
       href={href as RouteTemplate}
-      onClick={() => {
-        if (nestedKey) {
-          onNestedClick?.(nestedKey);
-        }
-      }}
       prefetch={true}
       suppressHydrationWarning
     >
       <span className={`icon icon-${icon}`} />
       <span className="label">{label}</span>
-      {nestedKey ? <span className="chevron" /> : null}
+      {showChevron ? <span className="chevron" /> : null}
     </Link>
   );
 }

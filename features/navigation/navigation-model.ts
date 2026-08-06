@@ -18,7 +18,7 @@ export interface RouteDefinition {
   action: string;
   description: string;
   label: string;
-  parent?: RouteTemplate;
+  section?: NestedSidebarKey;
 }
 
 export interface NavLinkDefinition {
@@ -37,7 +37,6 @@ export interface SidebarState {
   nestedKey?: NestedSidebarKey;
   pathname: string;
   route: RouteTemplate;
-  showNested: boolean;
 }
 
 export const routeDefinitions: Record<RouteTemplate, RouteDefinition> = {
@@ -55,47 +54,49 @@ export const routeDefinitions: Record<RouteTemplate, RouteDefinition> = {
     action: 'Query Logs',
     description: 'Understand application health across requests, functions, and traces.',
     label: 'Monitoring',
+    section: 'team-monitoring',
   },
   '/[teamSlug]/~/monitoring/query': {
     action: 'Run Query',
     description: 'Search logs, traces, and metrics with shared dashboard filters.',
     label: 'Query',
-    parent: '/[teamSlug]/~/monitoring',
+    section: 'team-monitoring',
   },
   '/[teamSlug]/~/monitoring/alerts': {
     action: 'Create Alert',
     description: 'Configure alerts for errors, latency, traffic, and spend.',
     label: 'Alerts',
-    parent: '/[teamSlug]/~/monitoring',
+    section: 'team-monitoring',
   },
   '/[teamSlug]/~/api': {
     action: 'Get API Key',
     description: 'Route model calls through one endpoint with unified usage and controls.',
     label: 'API',
+    section: 'team-api',
   },
   '/[teamSlug]/~/api/quick-start': {
     action: 'Copy Snippet',
     description: 'Connect an SDK and send your first request.',
     label: 'Quick Start',
-    parent: '/[teamSlug]/~/api',
+    section: 'team-api',
   },
   '/[teamSlug]/~/api/keys': {
     action: 'Create Key',
     description: 'Create and manage request keys.',
     label: 'Keys',
-    parent: '/[teamSlug]/~/api',
+    section: 'team-api',
   },
   '/[teamSlug]/~/api/providers': {
     action: 'Add Provider Key',
     description: 'Attach provider keys while keeping routing centralized.',
     label: 'Providers',
-    parent: '/[teamSlug]/~/api',
+    section: 'team-api',
   },
   '/[teamSlug]/~/api/settings': {
     action: 'Save Changes',
     description: 'Configure routing behavior, retention, and team defaults.',
     label: 'Settings',
-    parent: '/[teamSlug]/~/api',
+    section: 'team-api',
   },
   '/[teamSlug]/~/settings': {
     action: 'Invite Member',
@@ -121,12 +122,7 @@ export const topLevelLinks: TopLevelNavItem[] = [
   { icon: 'grid', route: '/[teamSlug]/~/settings' },
 ];
 
-export const nestedSidebarRoutes: Record<NestedSidebarKey, RouteTemplate> = {
-  'team-api': '/[teamSlug]/~/api',
-  'team-monitoring': '/[teamSlug]/~/monitoring',
-};
-
-export const nestedLinkDefinitions: Record<
+export const sidebarSections: Record<
   NestedSidebarKey,
   { links: NavLinkDefinition[]; title: string }
 > = {
@@ -163,43 +159,17 @@ export function pathToRoute(pathname: string, teamSlug: string): RouteTemplate {
   return route in routeDefinitions ? (route as RouteTemplate) : '/[teamSlug]';
 }
 
-export function ancestorsOf(route: RouteTemplate): RouteTemplate[] {
-  const ancestors: RouteTemplate[] = [];
-  let current: RouteTemplate | undefined = route;
-
-  while (current) {
-    ancestors.push(current);
-    const parent: RouteTemplate | undefined = routeDefinitions[current].parent;
-    if (parent) {
-      current = parent;
-      continue;
-    }
-
-    const lastSlash: number = current.lastIndexOf('/');
-    const next: string = lastSlash > 0 ? current.slice(0, lastSlash) : '';
-    current = next in routeDefinitions ? (next as RouteTemplate) : undefined;
-  }
-
-  return ancestors;
-}
-
-export function computeNestedSidebar(route: RouteTemplate): NestedSidebarKey | undefined {
-  const ancestors = new Set(ancestorsOf(route));
-  for (const [key, nestedRoute] of Object.entries(nestedSidebarRoutes)) {
-    if (ancestors.has(nestedRoute)) {
-      return key as NestedSidebarKey;
-    }
-  }
+export function getRouteSection(route: RouteTemplate): NestedSidebarKey | undefined {
+  return routeDefinitions[route].section;
 }
 
 export function getSidebarStateForPath(pathname: string, teamSlug: string): SidebarState {
   const route = pathToRoute(pathname, teamSlug);
-  const nestedKey = computeNestedSidebar(route);
+  const nestedKey = getRouteSection(route);
 
   return {
     nestedKey,
     pathname,
     route,
-    showNested: Boolean(nestedKey),
   };
 }

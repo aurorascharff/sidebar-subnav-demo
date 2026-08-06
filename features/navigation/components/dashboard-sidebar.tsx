@@ -1,18 +1,12 @@
+import { getSidebarStateForPath } from '../navigation-model';
 import { Sidebar } from './sidebar';
-import { getSidebarShell } from '../navigation-queries';
 
-export async function SidebarSlot({
-  segments,
-  teamSlug,
-}: {
-  segments?: string[];
-  teamSlug: string;
-}) {
-  const { initialState } = await getSidebarShell(teamSlug, segments);
+export function DashboardSidebar({ teamSlug }: { teamSlug: string }) {
+  const initialState = getSidebarStateForPath(`/${teamSlug}`, teamSlug);
   return <Sidebar initialState={initialState} teamSlug={teamSlug} />;
 }
 
-export function SidebarSkeleton() {
+export function DashboardSidebarSkeleton() {
   return (
     <aside className="dashboard-sidebar" aria-hidden>
       <div className="team-switcher">
