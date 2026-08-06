@@ -36,16 +36,20 @@ fallback would briefly show the wrong pane on a direct nested-route visit.
 
 ### Fix
 
-Only the navigation area is wrapped in Suspense, with a neutral skeleton that
-keeps its dimensions stable. The rest of the sidebar renders independently. A
-small inline script runs with the resolved links to set their active pathname
-before hydration; it does not choose the pane or reimplement navigation.
+Only the route-aware navigation is wrapped in Suspense. Its fallback renders
+the real static pane definitions instead of a generic skeleton. A small inline
+script reads `location.pathname`, reveals the matching pane, and marks its
+active link before the browser paints. React and `usePathname()` take over after
+hydration, so the script does not implement navigation.
 
-This is the main trade-off in the demo: a direct load briefly shows a neutral
-sub-nav fallback, while soft navigation remains immediate and preserves sidebar
-state. A parallel route could server-render the exact pane, but crossing its
-segment boundary can remount that pane and make its availability depend on the
-next route payload.
+This works because the pane definitions are static; only the current pathname
+is missing from the shared shell. It avoids showing either a navigation
+skeleton or the wrong product on a direct load. A parallel route could
+server-render the exact pane, but crossing its segment boundary could remount
+the pane and reset its internal state.
+
+The active-link part follows the same pre-paint pattern described in
+[Building an active NavLink component in Next.js](https://aurorascharff.no/posts/building-an-active-navlink-component-in-nextjs/).
 
 ## Problem 4: Session data should not block soft navigation
 
@@ -59,6 +63,11 @@ appear on every navigation.
 With Cache Components and Partial Prefetching, the default `<Link>` prefetch
 includes that session-dependent UI in the route App Shell and caches it only in
 the browser session. It still resolves fresh on a direct load.
+
+Partial Prefetching does not decide which sidebar pane is active. It makes the
+destination App Shell, including cacheable cookie-dependent UI, available
+before a soft-navigation click. The static fallback and pathname script handle
+the correct pane on an initial load.
 
 The links intentionally do not use `prefetch={true}`. That opt-in is for work
 that depends on per-link URL data such as `params` or `searchParams`; it is not
