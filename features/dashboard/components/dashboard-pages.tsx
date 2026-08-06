@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import {
   getApiKeyRows,
   getDeploymentRows,
@@ -16,16 +17,20 @@ interface Row {
   status: string;
 }
 
-export function DashboardHeader({
+function DashboardPage({
   action,
   area,
+  children,
   description,
+  metrics,
   teamSlug,
   title,
 }: {
   action: string;
   area: string;
+  children: React.ReactNode;
   description: string;
+  metrics: Metric[];
   teamSlug: string;
   title: string;
 }) {
@@ -34,13 +39,17 @@ export function DashboardHeader({
       <div className="topbar">
         <div className="breadcrumbs">{teamSlug} / {area}</div>
       </div>
-      <header className="page-header">
-        <div>
-          <h1>{title}</h1>
-          <p>{description}</p>
-        </div>
-        <button className="primary" type="button">{action}</button>
-      </header>
+      <div className="page">
+        <header className="page-header">
+          <div>
+            <h1>{title}</h1>
+            <p>{description}</p>
+          </div>
+          <button className="primary" type="button">{action}</button>
+        </header>
+        <MetricGrid metrics={metrics} />
+        {children}
+      </div>
     </>
   );
 }
@@ -54,14 +63,19 @@ export function PageSkeleton() {
       <div className="page">
         <div className="skeleton skeleton-title" />
         <div className="skeleton skeleton-line" />
+        <MetricGrid
+          metrics={[
+            { label: 'Metric', value: '-' },
+            { label: 'Metric', value: '-' },
+            { label: 'Metric', value: '-' },
+          ]}
+        />
       </div>
     </>
   );
 }
 
-export async function ProjectsOverview({ teamSlug }: { teamSlug: string }) {
-  const rows = await getProjectRows(teamSlug);
-
+export function ProjectsOverview({ teamSlug }: { teamSlug: string }) {
   return (
     <DashboardPage
       action="New Project"
@@ -72,17 +86,17 @@ export async function ProjectsOverview({ teamSlug }: { teamSlug: string }) {
         { label: 'Deployments', value: '184' },
         { label: 'Ready', value: '98%' },
       ]}
-      rows={rows}
-      tableLabel="Recent projects"
       teamSlug={teamSlug}
       title="Projects"
-    />
+    >
+      <Suspense fallback={<RowsSkeleton />}>
+        <ProjectRows teamSlug={teamSlug} />
+      </Suspense>
+    </DashboardPage>
   );
 }
 
-export async function DeploymentsPageContent({ teamSlug }: { teamSlug: string }) {
-  const rows = await getDeploymentRows(teamSlug);
-
+export function DeploymentsPageContent({ teamSlug }: { teamSlug: string }) {
   return (
     <DashboardPage
       action="New Deployment"
@@ -93,11 +107,13 @@ export async function DeploymentsPageContent({ teamSlug }: { teamSlug: string })
         { label: 'Preview', value: '141' },
         { label: 'Rollback', value: '1' },
       ]}
-      rows={rows}
-      tableLabel="Recent deployments"
       teamSlug={teamSlug}
       title="Deployments"
-    />
+    >
+      <Suspense fallback={<RowsSkeleton />}>
+        <DeploymentRows teamSlug={teamSlug} />
+      </Suspense>
+    </DashboardPage>
   );
 }
 
@@ -112,15 +128,18 @@ export function ApiOverviewPageContent({ teamSlug }: { teamSlug: string }) {
         { label: 'Providers', value: '3' },
         { label: 'Keys', value: '8' },
       ]}
-      rows={[
-        { detail: 'Guide', name: 'Quick Start', status: 'Ready' },
-        { detail: 'Credentials', name: 'Keys', status: 'Active' },
-        { detail: 'Routing', name: 'Providers', status: 'Configured' },
-      ]}
-      tableLabel="API setup"
       teamSlug={teamSlug}
       title="API"
-    />
+    >
+      <DataTable
+        label="API setup"
+        rows={[
+          { detail: 'Guide', name: 'Quick Start', status: 'Ready' },
+          { detail: 'Credentials', name: 'Keys', status: 'Active' },
+          { detail: 'Routing', name: 'Providers', status: 'Configured' },
+        ]}
+      />
+    </DashboardPage>
   );
 }
 
@@ -135,21 +154,22 @@ export function ApiQuickStartPageContent({ teamSlug }: { teamSlug: string }) {
         { label: 'Runtime', value: 'Node' },
         { label: 'Status', value: 'Ready' },
       ]}
-      rows={[
-        { detail: 'Environment', name: 'Add API_KEY', status: 'Required' },
-        { detail: 'SDK', name: 'Install client', status: 'Ready' },
-        { detail: 'Request', name: 'Send test call', status: 'Next' },
-      ]}
-      tableLabel="Quick start"
       teamSlug={teamSlug}
       title="Quick Start"
-    />
+    >
+      <DataTable
+        label="Quick start"
+        rows={[
+          { detail: 'Environment', name: 'Add API_KEY', status: 'Required' },
+          { detail: 'SDK', name: 'Install client', status: 'Ready' },
+          { detail: 'Request', name: 'Send test call', status: 'Next' },
+        ]}
+      />
+    </DashboardPage>
   );
 }
 
-export async function ApiKeysPageContent({ teamSlug }: { teamSlug: string }) {
-  const rows = await getApiKeyRows(teamSlug);
-
+export function ApiKeysPageContent({ teamSlug }: { teamSlug: string }) {
   return (
     <DashboardPage
       action="Create Key"
@@ -160,11 +180,13 @@ export async function ApiKeysPageContent({ teamSlug }: { teamSlug: string }) {
         { label: 'Rotated', value: '2' },
         { label: 'Expired', value: '0' },
       ]}
-      rows={rows}
-      tableLabel="Keys"
       teamSlug={teamSlug}
       title="Keys"
-    />
+    >
+      <Suspense fallback={<RowsSkeleton />}>
+        <ApiKeyRows teamSlug={teamSlug} />
+      </Suspense>
+    </DashboardPage>
   );
 }
 
@@ -179,15 +201,18 @@ export function ApiProvidersPageContent({ teamSlug }: { teamSlug: string }) {
         { label: 'Fallbacks', value: '2' },
         { label: 'Healthy', value: '100%' },
       ]}
-      rows={[
-        { detail: 'Primary', name: 'Provider A', status: 'Healthy' },
-        { detail: 'Fallback', name: 'Provider B', status: 'Healthy' },
-        { detail: 'Embeddings', name: 'Provider C', status: 'Healthy' },
-      ]}
-      tableLabel="Providers"
       teamSlug={teamSlug}
       title="Providers"
-    />
+    >
+      <DataTable
+        label="Providers"
+        rows={[
+          { detail: 'Primary', name: 'Provider A', status: 'Healthy' },
+          { detail: 'Fallback', name: 'Provider B', status: 'Healthy' },
+          { detail: 'Embeddings', name: 'Provider C', status: 'Healthy' },
+        ]}
+      />
+    </DashboardPage>
   );
 }
 
@@ -202,21 +227,22 @@ export function ApiSettingsPageContent({ teamSlug }: { teamSlug: string }) {
         { label: 'Retries', value: 'On' },
         { label: 'Budget', value: '$2K' },
       ]}
-      rows={[
-        { detail: 'Traffic', name: 'Retry failed requests', status: 'Enabled' },
-        { detail: 'Usage', name: 'Store request metadata', status: 'Enabled' },
-        { detail: 'Spend', name: 'Monthly budget alert', status: 'Enabled' },
-      ]}
-      tableLabel="Settings"
       teamSlug={teamSlug}
       title="Settings"
-    />
+    >
+      <DataTable
+        label="Settings"
+        rows={[
+          { detail: 'Traffic', name: 'Retry failed requests', status: 'Enabled' },
+          { detail: 'Usage', name: 'Store request metadata', status: 'Enabled' },
+          { detail: 'Spend', name: 'Monthly budget alert', status: 'Enabled' },
+        ]}
+      />
+    </DashboardPage>
   );
 }
 
-export async function MonitoringPageContent({ teamSlug }: { teamSlug: string }) {
-  const rows = await getMonitoringRows(teamSlug);
-
+export function MonitoringPageContent({ teamSlug }: { teamSlug: string }) {
   return (
     <DashboardPage
       action="Query Logs"
@@ -227,11 +253,13 @@ export async function MonitoringPageContent({ teamSlug }: { teamSlug: string }) 
         { label: 'Errors', value: '0.02%' },
         { label: 'Latency', value: '84ms' },
       ]}
-      rows={rows}
-      tableLabel="Signals"
       teamSlug={teamSlug}
       title="Monitoring"
-    />
+    >
+      <Suspense fallback={<RowsSkeleton />}>
+        <MonitoringRows teamSlug={teamSlug} />
+      </Suspense>
+    </DashboardPage>
   );
 }
 
@@ -246,15 +274,18 @@ export function MonitoringQueryPageContent({ teamSlug }: { teamSlug: string }) {
         { label: 'Matches', value: '481' },
         { label: 'Saved', value: '6' },
       ]}
-      rows={[
-        { detail: 'error:false', name: 'status:200', status: '481 hits' },
-        { detail: 'region:iad', name: 'duration:<100', status: '312 hits' },
-        { detail: 'path:/api/*', name: 'method:POST', status: '89 hits' },
-      ]}
-      tableLabel="Recent queries"
       teamSlug={teamSlug}
       title="Query"
-    />
+    >
+      <DataTable
+        label="Recent queries"
+        rows={[
+          { detail: 'error:false', name: 'status:200', status: '481 hits' },
+          { detail: 'region:iad', name: 'duration:<100', status: '312 hits' },
+          { detail: 'path:/api/*', name: 'method:POST', status: '89 hits' },
+        ]}
+      />
+    </DashboardPage>
   );
 }
 
@@ -269,15 +300,18 @@ export function MonitoringAlertsPageContent({ teamSlug }: { teamSlug: string }) 
         { label: 'Muted', value: '1' },
         { label: 'Triggered', value: '0' },
       ]}
-      rows={[
-        { detail: 'Error rate', name: 'Production errors', status: 'Active' },
-        { detail: 'Latency', name: 'P95 over 500ms', status: 'Active' },
-        { detail: 'Spend', name: 'Monthly budget', status: 'Active' },
-      ]}
-      tableLabel="Alerts"
       teamSlug={teamSlug}
       title="Alerts"
-    />
+    >
+      <DataTable
+        label="Alerts"
+        rows={[
+          { detail: 'Error rate', name: 'Production errors', status: 'Active' },
+          { detail: 'Latency', name: 'P95 over 500ms', status: 'Active' },
+          { detail: 'Spend', name: 'Monthly budget', status: 'Active' },
+        ]}
+      />
+    </DashboardPage>
   );
 }
 
@@ -292,52 +326,35 @@ export function SettingsPageContent({ teamSlug }: { teamSlug: string }) {
         { label: 'Teams', value: '4' },
         { label: 'SSO', value: 'On' },
       ]}
-      rows={[
-        { detail: 'Access', name: 'Members and roles', status: 'Configured' },
-        { detail: 'Billing', name: 'Plan and invoices', status: 'Current' },
-        { detail: 'Security', name: 'Authentication', status: 'Enforced' },
-      ]}
-      tableLabel="Settings"
       teamSlug={teamSlug}
       title="Settings"
-    />
+    >
+      <DataTable
+        label="Settings"
+        rows={[
+          { detail: 'Access', name: 'Members and roles', status: 'Configured' },
+          { detail: 'Billing', name: 'Plan and invoices', status: 'Current' },
+          { detail: 'Security', name: 'Authentication', status: 'Enforced' },
+        ]}
+      />
+    </DashboardPage>
   );
 }
 
-function DashboardPage({
-  action,
-  area,
-  description,
-  metrics,
-  rows,
-  tableLabel,
-  teamSlug,
-  title,
-}: {
-  action: string;
-  area: string;
-  description: string;
-  metrics: Metric[];
-  rows: Row[];
-  tableLabel: string;
-  teamSlug: string;
-  title: string;
-}) {
-  return (
-    <>
-      <DashboardHeader
-        action={action}
-        area={area}
-        description={description}
-        teamSlug={teamSlug}
-        title={title}
-      />
-      <div className="page">
-        <MetricGrid metrics={metrics} />
-        <DataTable label={tableLabel} rows={rows} />
-      </div>
-    </>
-  );
+async function ProjectRows({ teamSlug }: { teamSlug: string }) {
+  return <DataTable label="Recent projects" rows={await getProjectRows(teamSlug)} />;
+}
+
+async function DeploymentRows({ teamSlug }: { teamSlug: string }) {
+  return <DataTable label="Recent deployments" rows={await getDeploymentRows(teamSlug)} />;
+}
+
+async function ApiKeyRows({ teamSlug }: { teamSlug: string }) {
+  return <DataTable label="Keys" rows={await getApiKeyRows(teamSlug)} />;
+}
+
+async function MonitoringRows({ teamSlug }: { teamSlug: string }) {
+  return <DataTable label="Signals" rows={await getMonitoringRows(teamSlug)} />;
 }
 
 function MetricGrid({ metrics }: { metrics: Metric[] }) {
@@ -361,6 +378,20 @@ function DataTable({ label, rows }: { label: string; rows: Row[] }) {
           <span>{row.name}</span>
           <span>{row.detail}</span>
           <span className="status">{row.status}</span>
+        </div>
+      ))}
+    </section>
+  );
+}
+
+function RowsSkeleton() {
+  return (
+    <section className="section" aria-label="Loading rows">
+      {Array.from({ length: 3 }, (_, index) => (
+        <div className="row" key={index}>
+          <span className="skeleton skeleton-line" />
+          <span className="skeleton skeleton-line" />
+          <span className="skeleton skeleton-line" />
         </div>
       ))}
     </section>

@@ -366,11 +366,23 @@ p {
 }
 
 .card {
-  min-height: 112px;
+  min-height: 126px;
   border: 1px solid var(--border);
   border-radius: 8px;
   background: var(--raised);
-  padding: 14px;
+  padding: 16px;
+  display: grid;
+  align-content: space-between;
+  gap: 18px;
+}
+
+.card strong {
+  font-weight: 500;
+}
+
+.card span {
+  color: var(--muted);
+  font-size: 13px;
 }
 
 .metric {
@@ -395,9 +407,9 @@ p {
 
 .row {
   display: grid;
-  grid-template-columns: 1fr 140px 110px;
-  gap: 16px;
-  min-height: 48px;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: 12px;
+  min-height: 44px;
   align-items: center;
   border-top: 1px solid var(--border-soft);
   padding: 0 14px;
@@ -456,92 +468,6 @@ p {
   }
 }
 
-@media (max-width: 780px) {
-  .app-shell {
-    grid-template-columns: 1fr;
-  }
-
-  .dashboard-sidebar {
-    position: relative;
-    height: 360px;
-  }
-
-  .page {
-    padding: 22px;
-  }
-
-  .page-header {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .cards {
-    grid-template-columns: 1fr;
-  }
-
-  .row {
-    grid-template-columns: 1fr;
-  }
-}
-
-.card {
-  min-height: 126px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--raised);
-  padding: 16px;
-  display: grid;
-  align-content: space-between;
-  gap: 18px;
-}
-
-.card strong {
-  font-weight: 500;
-}
-
-.card span {
-  color: var(--muted);
-  font-size: 13px;
-}
-
-.meter {
-  height: 5px;
-  border-radius: 999px;
-  overflow: hidden;
-  background: var(--border-soft);
-}
-
-.meter span {
-  display: block;
-  width: var(--value);
-  height: 100%;
-  border-radius: inherit;
-  background: var(--blue);
-}
-
-.table {
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  overflow: hidden;
-  background: var(--raised);
-}
-
-.row {
-  display: grid;
-  grid-template-columns: 1.4fr 1fr 1fr;
-  gap: 12px;
-  min-height: 44px;
-  align-items: center;
-  padding: 0 14px;
-  border-top: 1px solid var(--border-soft);
-}
-
-.row:first-child {
-  border-top: 0;
-  color: var(--muted);
-  font-size: 13px;
-}
-
 @media (max-width: 820px) {
   .app-shell {
     grid-template-columns: 1fr;
@@ -567,5 +493,9 @@ p {
 
   .page {
     padding: 18px;
+  }
+
+  .row {
+    grid-template-columns: 1fr;
   }
 }
