@@ -37,19 +37,17 @@ fallback would briefly show the wrong pane on a direct nested-route visit.
 ### Fix
 
 Only the route-aware navigation is wrapped in Suspense. Its fallback renders
-the real static pane definitions instead of a generic skeleton. A small inline
-script reads `location.pathname`, reveals the matching pane, and marks its
-active link before the browser paints. React and `usePathname()` take over after
-hydration, so the script does not implement navigation.
+the real top-level navigation instead of a generic skeleton. This keeps
+top-level routes stable and lets direct nested routes show a deliberate fallback
+until `usePathname()` resolves the correct pane.
 
-This works because the pane definitions are static; only the current pathname
-is missing from the shared shell. It avoids showing either a navigation
-skeleton or the wrong product on a direct load. A parallel route could
-server-render the exact pane, but crossing its segment boundary could remount
-the pane and reset its internal state.
-
-The active-link part follows the same pre-paint pattern described in
+A second inline script could select the nested pane before hydration, but that
+would duplicate more route-selection logic. The demo leaves that trade-off open
+and uses a small pre-paint script only for active-link state, following
 [Building an active NavLink component in Next.js](https://aurorascharff.no/posts/building-an-active-navlink-component-in-nextjs/).
+
+A parallel route could server-render the exact pane, but crossing its segment
+boundary could remount the pane and reset its internal state.
 
 ## Problem 4: Session data should not block soft navigation
 
@@ -66,8 +64,8 @@ the browser session. It still resolves fresh on a direct load.
 
 Partial Prefetching does not decide which sidebar pane is active. It makes the
 destination App Shell, including cacheable cookie-dependent UI, available
-before a soft-navigation click. The static fallback and pathname script handle
-the correct pane on an initial load.
+before a soft-navigation click, so the route can commit and `usePathname()` can
+update the persistent sidebar without an optimistic pane switch.
 
 The links intentionally do not use `prefetch={true}`. That opt-in is for work
 that depends on per-link URL data such as `params` or `searchParams`; it is not
