@@ -32,7 +32,7 @@ export function SidebarModeSwitch() {
         onClick={() => selectMode('inline')}
         type="button"
       >
-        Inline
+        Inline script
       </button>
     </div>
   );

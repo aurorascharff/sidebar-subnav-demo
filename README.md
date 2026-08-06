@@ -40,9 +40,9 @@ The demo exposes both choices with the switch below the sidebar:
 
 - **Fallback** renders a stable pane skeleton until `usePathname()` resolves the
   correct navigation. It avoids showing the wrong pane but has a loading state.
-- **Inline** includes the static panes in the fallback and uses a pre-paint
-  script to select the correct one. It avoids the loading state but duplicates a
-  small amount of route-selection logic.
+- **Inline script** includes the static panes in the fallback and uses a
+  pre-paint script to select the correct one. It avoids the loading state but
+  duplicates a small amount of route-selection logic.
 
 The switch stores the selected mode in a cookie and reloads the same URL. A
 demo-only wrapper chooses between the two fallback components, keeping that
