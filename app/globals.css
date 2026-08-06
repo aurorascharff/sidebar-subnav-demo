@@ -439,6 +439,32 @@ p {
   font-size: 13px;
 }
 
+.offline-status {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--background);
+  color: var(--foreground);
+  padding: 9px 12px;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 12%);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.offline-status-dot {
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: 50%;
+  background: #d83b32;
+}
+
 .skeleton {
   animation: pulse 1.2s ease-in-out infinite;
   background: var(--active);

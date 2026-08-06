@@ -73,6 +73,25 @@ The links intentionally do not use `prefetch={true}`. That opt-in is for work
 that depends on per-link URL data such as `params` or `searchParams`; it is not
 required for cookie-dependent shell data.
 
+## Problem 5: A slow or offline navigation should not make the selected product ambiguous
+
+If navigation waits on the network before updating the sidebar, the user cannot
+tell whether their click worked or which product is opening.
+
+### Fix
+
+The demo enables `experimental.useOffline` and shows a small connectivity status
+using `useOffline()`. After the visible links have prefetched, their App Shells
+remain available during a network interruption. Clicking between those routes
+commits the prefetched shell, so the persistent sidebar selects the correct pane
+without an optimistic state update. Uncached rows remain in their Suspense
+fallback and resume when the connection returns.
+
+To test this in a production build, open a nested pane and give its links a
+moment to prefetch. Set the browser network to **Offline** or a throttled profile,
+then navigate between those links. A full reload while offline still requires a
+service worker and is outside this demo.
+
 ## Run
 
 ```sh
